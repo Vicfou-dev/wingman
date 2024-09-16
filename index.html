@@ -188,25 +188,29 @@
         }
 
         function animate() {
-            requestAnimationFrame(animate);
+    requestAnimationFrame(animate);
 
-            // Mettre à jour les mixers pour les animations
-            const delta = 0.01;
-            mixers.forEach(mixer => mixer.update(delta));
+    // Mettre à jour les mixers pour les animations
+    const delta = 0.01;
+    mixers.forEach(mixer => mixer.update(delta));
 
-            // Rotation uniquement du groupe des modèles
-            modelGroup.rotation.y += (targetRotationY - modelGroup.rotation.y) * 0.05;
+    // Rotation uniquement du groupe des modèles
+    modelGroup.rotation.y += (targetRotationY - modelGroup.rotation.y) * 0.05;
 
-            // Faire en sorte que les modèles regardent vers la caméra
-            modelGroup.children.forEach((child) => {
-                const targetPosition = new THREE.Vector3(camera.position.x, 0, camera.position.z);
-    
-                // Aligner chaque modèle avec ce vecteur, sans inclinaison sur l'axe Y
-                child.lookAt(targetPosition); // Tourner les modèles vers la caméra sans inclinaison
-            });
+    modelGroup.children.forEach((model) => {
+        // Récupérer la position du modèle
+        const modelPosition = new THREE.Vector3();
+        model.getWorldPosition(modelPosition);
+        
+        // Créer un point de regard avec la même hauteur (Y) que le modèle et la position XZ de la caméra
+        const lookAtPoint = new THREE.Vector3(modelPosition.x, modelPosition.y, camera.position.z);
 
-            renderer.render(scene, camera);
-        }
+        // Appliquer lookAt pour orienter le modèle vers ce point
+        model.lookAt(lookAtPoint);
+    });
+
+    renderer.render(scene, camera);
+}
     </script>
 </body>
 </html>
